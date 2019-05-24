@@ -1,4 +1,4 @@
-import _ from "lodash";
+import {reduce, each} from "lodash";
 import postal from "postal";
 import "./postal-utils";
 import { packingSlips, getPackingSlip } from "./packingSlips";
@@ -27,13 +27,13 @@ const fedx = postal.fedx = {
 			state._outboundQueue.push( arguments );
 			return;
 		}
-		_.each( this.transports, function( transport ) {
+		each( this.transports, function( transport ) {
 			transport.sendMessage( envelope );
 		} );
 	},
 	disconnect: disconnect,
 	_getTransports: function() {
-		return _.reduce( this.transports, function( memo, transport, name ) {
+		return reduce( this.transports, function( memo, transport, name ) {
 			memo[name] = true;
 			return memo;
 		}, {} );
@@ -75,7 +75,7 @@ const fedx = postal.fedx = {
 			transports[transport] = [ target ];
 			break;
 		}
-		_.each( transports, function( targets, name ) {
+		each( transports, function( targets, name ) {
 			targets = typeof targets === "boolean" ? [] : targets;
 			this.transports[name].signalReady( targets, callback );
 		}, this );

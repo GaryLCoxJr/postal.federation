@@ -2,7 +2,7 @@ import { getPackingSlip } from "./packingSlips";
 import { state, disconnect } from "./state";
 import { matchesFilter } from "./filters";
 import postal from "postal";
-import _ from "lodash";
+import {contains, without, each, extend} from "lodash";
 
 export const handlers = {
 	"federation.ping": function( data /*, callback */ ) {
@@ -27,7 +27,7 @@ export const handlers = {
 			} );
 			data.source.pings[data.packingSlip.pingData.ticket] = undefined;
 		}
-		if ( !_.contains( state._clients, data.packingSlip.instanceId ) ) {
+		if ( !contains( state._clients, data.packingSlip.instanceId ) ) {
 			state._clients.push( data.packingSlip.instanceId );
 		}
 		postal.publish( {
@@ -41,7 +41,7 @@ export const handlers = {
 		} );
 	},
 	"federation.disconnect": function( data ) {
-		state._clients = _.without( state._clients, data.source.instanceId );
+		state._clients = without( state._clients, data.source.instanceId );
 		disconnect( {
 			transport: data.source.transportName,
 			instanceId: data.source.instanceId,
@@ -56,8 +56,8 @@ export const handlers = {
 		}
 	},
 	"federation.bundle": function( data ) {
-		_.each( data.packingSlip.packingSlips, function( slip ) {
-			onFederatedMsg( _.extend( {}, data, {
+		each( data.packingSlip.packingSlips, function( slip ) {
+			onFederatedMsg( extend( {}, data, {
 				packingSlip: slip
 			} ) );
 		} );

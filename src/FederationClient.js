@@ -2,7 +2,7 @@ import { getPackingSlip } from "./packingSlips";
 import { onFederatedMsg } from "./handlers";
 import { state, NO_OP } from "./state";
 import postal from "postal";
-import _ from "lodash";
+import {clone, extend, without, include} from "lodash";
 
 export default class FederationClient {
 	constructor( target, options, instanceId ) {
@@ -35,12 +35,12 @@ export default class FederationClient {
 			return;
 		}
 		envelope.originId = envelope.originId || postal.instanceId();
-		const env = _.clone( envelope );
+		const env = clone( envelope );
 		if ( this.instanceId && this.instanceId !== env.lastSender &&
 		( !env.knownIds || !env.knownIds.length ||
-		( env.knownIds && !_.include( env.knownIds, this.instanceId ) ) )
+		( env.knownIds && !include( env.knownIds, this.instanceId ) ) )
 		) {
-			env.knownIds = ( env.knownIds || [] ).concat( _.without( state._clients, this.instanceId ) );
+			env.knownIds = ( env.knownIds || [] ).concat( without( state._clients, this.instanceId ) );
 			this.send( getPackingSlip( "message", env ) );
 		}
 	}
@@ -77,8 +77,8 @@ export default class FederationClient {
 		}
 
 		FedXClient.prototype = Object.create( FederationClient.prototype );
-		_.extend( FedXClient.prototype, props );
-		_.extend( FedXClient, ctrProps );
+		extend( FedXClient.prototype, props );
+		extend( FedXClient, ctrProps );
 
 		return FedXClient;
 	}

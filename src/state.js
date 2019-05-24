@@ -1,4 +1,4 @@
-import _ from "lodash";
+import {defaults, each} from "lodash";
 
 const _defaults = {
 	enabled: true,
@@ -23,7 +23,7 @@ export function configure( cfg ) {
 		throw new Error( "postal.fedx filterMode must be 'blacklist' or 'whitelist'." );
 	}
 	if ( cfg ) {
-		state._config = _.defaults( cfg, _defaults );
+		state._config = defaults( cfg, _defaults );
 	}
 	return state._config;
 }
@@ -35,7 +35,7 @@ export function disconnect( options ) {
 		trans = {};
 		trans[options.transport] = state._transports[options.transport];
 	}
-	_.each( trans, function( t ) {
+	each( trans, function( t ) {
 		t.disconnect( {
 			target: options.target,
 			instanceId: options.instanceId,
